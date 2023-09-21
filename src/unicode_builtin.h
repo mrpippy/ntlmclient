@@ -10,7 +10,6 @@
 #define PRIVATE_UNICODE_BUILTIN_H__
 
 #include <locale.h>
-#include <iconv.h>
 
 #include "ntlmclient.h"
 
