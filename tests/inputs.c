@@ -69,8 +69,8 @@ void test_inputs__set_credentials(void)
 
 void test_inputs__set_credentials_unicode(void)
 {
-	cl_must_pass(ntlm_client_set_credentials(ntlm, "us\u00e9r", "DOMAIN", "pass!"));
-	cl_assert_equal_s("us\u00e9r", ntlm->username);
+	cl_must_pass(ntlm_client_set_credentials(ntlm, "usér", "DOMAIN", "pass!"));
+	cl_assert_equal_s("usér", ntlm->username);
 	cl_assert_equal_s("DOMAIN", ntlm->userdomain);
 	cl_assert_equal_s("pass!", ntlm->password);
 
