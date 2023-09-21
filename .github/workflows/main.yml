@@ -103,6 +103,16 @@ jobs:
             qemu: true
             env: { CC: 'gcc', CMAKE_OPTIONS: '-DCRYPT=openssl-dynamic -DUNICODE=builtin' }
 
+          # Windows (x64)
+          - platform: 'windows-latest'
+            container: ''
+            env: { CMAKE_OPTIONS: '-A x64 -DBUILD_CLI=off', CMAKE_GENERATOR: 'Visual Studio 17 2022' }
+
+          # Windows (x86)
+          - platform: 'windows-latest'
+            container: ''
+            env: { CMAKE_OPTIONS: '-A Win32 -DBUILD_CLI=off', CMAKE_GENERATOR: 'Visual Studio 17 2022' }
+
           # macOS
           - platform: 'macos-latest'
             container: ''
@@ -118,6 +128,7 @@ jobs:
       if: matrix.config.qemu == true
     - name: Build and test
       env: ${{ matrix.config.env }}
+      shell: bash
       run: |
         if [ -n "${{ matrix.config.container }}" ]; then
           docker run -v $(pwd):/src -w /src -e CC -e CMAKE_GENERATOR -e CMAKE_OPTIONS -e PKG_CONFIG_PATH -e SKIP_SSH_TESTS -e SKIP_NEGOTIATE_TESTS ${{ matrix.config.container }} /bin/bash -c "mkdir build && cd build && ../ci/build.sh && ../ci/test.sh"
