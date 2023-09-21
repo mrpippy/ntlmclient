@@ -13,7 +13,12 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <time.h>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 
 #include "ntlm.h"
 #include "unicode.h"
