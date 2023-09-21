@@ -19,7 +19,7 @@ OPTION(ENABLE_ASAN   "Enable AddressSanitizer" OFF)
 OPTION(ENABLE_WERROR "Treat warnings as errors" ON)
 
 SET(UNICODE "default" CACHE STRING "Unicode implementation to use; may be 'iconv' or 'builtin'.")
-SET(CRYPT   "default" CACHE STRING "Cryptographic implementation to use; may be 'commoncrypto', 'mbedtls', 'openssl', or 'openssl-dynamic'.")
+SET(CRYPT   "default" CACHE STRING "Cryptographic implementation to use; may be 'commoncrypto', 'bcrypt', 'mbedtls', 'openssl', or 'openssl-dynamic'.")
 
 SET(PATH_SRC     "${NTLM_SOURCE_DIR}/src")
 SET(PATH_INCLUDE "${NTLM_SOURCE_DIR}/include")
@@ -62,11 +62,13 @@ ELSE()
 	MESSAGE(FATAL_ERROR "invalid unicode support requested: ${UNICODE}")
 ENDIF()
 
-# Locate crypto support: default to CommonCrypto on macOS, use openssl
-# otherwise.
+# Locate crypto support: default to CommonCrypto on macOS, bcrypt on Windows,
+# and use mbedtls/openssl otherwise.
 IF(CRYPT STREQUAL "default")
 	IF(APPLE)
 		SET(CRYPT "commoncrypto")
+	ELSEIF(WIN32)
+		SET(CRYPT "bcrypt")
 	ELSE()
 		FIND_PACKAGE(mbedTLS)
 		FIND_PACKAGE(OpenSSL)
@@ -89,6 +91,13 @@ IF(CRYPT STREQUAL "commoncrypto")
 	SET_SOURCE_FILES_PROPERTIES("${PATH_SRC}/crypt_commoncrypto.c" COMPILE_FLAGS "-Wno-deprecated")
 
 	ADD_FEATURE_INFO(CRYPT ON "using macOS CommonCrypto support")
+ELSEIF(CRYPT STREQUAL "bcrypt")
+	ADD_DEFINITIONS(-DCRYPT_BCRYPT)
+	FILE(GLOB NTLM_SRC_CRYPT "${PATH_SRC}/crypt_bcrypt.c")
+
+	LIST(APPEND NTLM_LIBS bcrypt)
+
+	ADD_FEATURE_INFO(CRYPT ON "using Windows bcrypt support")
 ELSEIF(CRYPT STREQUAL "mbedtls")
 	FIND_PACKAGE(mbedTLS)
 
