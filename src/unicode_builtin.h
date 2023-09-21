@@ -14,6 +14,9 @@
 #include "ntlmclient.h"
 
 struct ntlm_unicode_ctx {
+#ifdef _MSC_VER
+	int msvc_doesnt_allow_empty_structs;
+#endif
 };
 
 #endif /* PRIVATE_UNICODE_BUILTIN_H__ */
