@@ -17,7 +17,9 @@
 		cl_ntlm_report_failure(ntlm, file, func, line, "Function call failed: " #expr); \
 } while (0)
 
+#ifdef __GNUC__
 __attribute__((unused))
+#endif
 static void cl_ntlm_report_failure(
 	ntlm_client *ntlm,
 	const char *file,
